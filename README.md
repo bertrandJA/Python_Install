@@ -12,3 +12,4 @@ Usage:
   * specify that you are behind a proxy
   * ...
 * execute the script
+* confirm the installation of Python, without changing the default parameters
