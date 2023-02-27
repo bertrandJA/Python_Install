@@ -1,9 +1,9 @@
-﻿#This script installs Python with common libraries. It must be executed in PowerShell ISE
-$python_url = 'https://www.python.org/ftp/python/3.10.8/python-3.10.8-amd64.exe' #Change URL if you need a different version
-$installPython = $true #Set to false if Python is already installed, and you only want to install/update libraries
-$list_libraries = 'pip pandas PySide6' #list of common libraries to install or update
-$behindFirewall = $false #Set to $true if you are on l'Oréal laptop at the office, and $false otherwise
-$proxy = 'http://00.0.0.0:8080' #enter here the IP of your proxy if you are behind a firewall
+#This script installs Python with common libraries. It must be executed in PowerShell ISE
+$behindFirewall = $true #Set to $true if you are at the office, and $false otherwise
+$python_url = 'https://www.python.org/ftp/python/3.11.1/python-3.11.1-amd64.exe' #Change URL if you need a different version
+$installPython = $true #Set to false if Python is installed, and you only want to install/update libraries
+#$proxy = 'http://0.0.0.0:8080' #proxy (not needed any more)
+$list_libraries = "pandas PySide6" #list of libraries to install or update
 
 if ($installPython) {
 	#Specify the target location in the user's Downloads folder
@@ -22,6 +22,9 @@ $Env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
 python --version #Check installed version
 
 #Install or upgrade all dependancies (pip,...)
-$proxy_chain = if($behindFirewall) {' --trusted-host pypi.org --trusted-host files.pythonhosted.org --proxy=' + $proxy} else {''}
-$command = 'python -m pip install --upgrade ' + $list_libraries + $proxy_chain
+$proxy_chain = if($behindFirewall) {' --trusted-host pypi.org --trusted-host files.pythonhosted.org'} else {''}
+#$proxy_chain = if($behindFirewall) {' --trusted-host pypi.org --trusted-host files.pythonhosted.org --proxy=' + $proxy} else {''}
+
+Start-Process -FilePath "python" -ArgumentList "-m", "pip", "install", "--upgrade", "pip", $proxy_chain -wait #First upgrade pip
+$command = 'python -m pip install --upgrade ' + $list_libraries + $proxy_chain	#install/upgrade libraries
 Invoke-Expression $command
